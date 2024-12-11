@@ -281,10 +281,10 @@ def get_server_status():
         try:
             # Wait for either "statusup" or "statusdown" to appear
             WebDriverWait(driver, 5).until(
-				lambda d: d.find_elements(By.CLASS_NAME, "statusup") or d.find_elements(By.CLASS_NAME, "statusdown")
-			)
-				
-			# Check which element is present and extract the status message
+		lambda d: d.find_elements(By.CLASS_NAME, "statusup") or d.find_elements(By.CLASS_NAME, "statusdown")
+	    )
+	
+	    # Check which element is present and extract the status message
             if driver.find_elements(By.CLASS_NAME, "statusup"):
                 status_message = driver.find_element(By.CLASS_NAME, "statusup").text.strip()
             elif driver.find_elements(By.CLASS_NAME, "statusdown"):
@@ -292,7 +292,7 @@ def get_server_status():
             else:
                 status_message = "Unable to determine server status."
         except Exception as e:
-			# Handle unexpected errors
+	    # Handle unexpected errors
             status_message = f"Error occurred: {str(e)}"
                 
         # Calculate response time
