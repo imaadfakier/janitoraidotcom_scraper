@@ -277,18 +277,24 @@ def get_server_status():
         # Submit the form
         input_field.send_keys(Keys.RETURN)
         
-        # Wait for the result to load (max 10 seconds wait)
-        WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.CLASS_NAME, "statusup"))
-        )
-        
         # Extract the server status message
         try:
-            status_message = driver.find_element(By.CLASS_NAME, "statusup").text.strip()
-        except:
-            # Fallback to "statusdown" class if "statusup" is not found
-            status_message = driver.find_element(By.CLASS_NAME, "statusdown").text.strip()
-        
+            # Wait for either "statusup" or "statusdown" to appear
+            WebDriverWait(driver, 5).until(
+				lambda d: d.find_elements(By.CLASS_NAME, "statusup") or d.find_elements(By.CLASS_NAME, "statusdown")
+			)
+				
+			# Check which element is present and extract the status message
+            if driver.find_elements(By.CLASS_NAME, "statusup"):
+                status_message = driver.find_element(By.CLASS_NAME, "statusup").text.strip()
+            elif driver.find_elements(By.CLASS_NAME, "statusdown"):
+                status_message = driver.find_element(By.CLASS_NAME, "statusdown").text.strip()
+            else:
+                status_message = "Unable to determine server status."
+        except Exception as e:
+			# Handle unexpected errors
+            status_message = f"Error occurred: {str(e)}"
+                
         # Calculate response time
         response_time = round(time.time() - submit_time_start, 3)
         
